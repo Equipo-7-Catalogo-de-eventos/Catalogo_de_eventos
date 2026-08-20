@@ -1,2 +1,2 @@
-# Cat-logo_de_eventos
+# Catalogo_de_eventos
 Microservicio de catálogo de eventos
