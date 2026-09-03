@@ -16,51 +16,61 @@
 
 ```mermaid
 sequenceDiagram
-    actor Usuario
+    actor Usuario as Cliente
     participant Sistema as Sistema (Catálogo)
     participant ModOrganizador as Módulo Panel Organizador
     participant ModResenas as Módulo Reseñas
+    participant ModInventario as Módulo Entradas / Inventario
     autonumber
 
     %% Flujo 1: Carga Inicial de Catálogo con los 6 eventos más próximos (HU1)
     Note over Usuario,ModOrganizador: 1. Carga Inicial: 6 Eventos Próximos (HU1)
-    Usuario->>Sistema: Ver catálogo
-    Sistema->>ModOrganizador: soloicitar_eventos_proximos()
-    Note over ModOrganizador: Incluye título, lugar, fecha, imagen, stock y precio final (con promoción aplicada)
-    ModOrganizador-->>Sistema: Retorna listado de eventos con todos sus datos
-    Sistema-->>Usuario: Despliega catálogo con las tarjetas de los 6 eventos más próximos
+    Usuario->>Sistema: ver_catalogo()
+    Sistema->>ModOrganizador: solicitar_eventos_proximos()
+    Note over ModOrganizador: Incluye título, lugar, fecha, imagen, stock y precio final
+    ModOrganizador-->>Sistema: retornar_eventos_proximos(lista_eventos)
+    Sistema->>ModResenas: solicitar_calificaciones_basicas(lista_id_eventos)
+    Note over ModResenas,Sistema: Puede retornar las calificaciones o vacío (si no hay reseñas)
+    ModResenas-->>Sistema: retornar_calificaciones_basicas(calificaciones_o_vacio)
+    Sistema-->>Usuario: mostrar_catalogo_proximos_eventos()
 
     %% Flujo 2: Búsqueda, Filtros y Eventos Pasados (HU1, HU2, HU3)
-    Note over Usuario,Sistema: 2. Exploración y Filtros (HU1, HU2, HU3)
-    opt Filtrar por pasados, categorías o búsqueda
-        Usuario->>Sistema: Aplica filtro (ver pasados, fechas o palabra clave)
-        Sistema-->>Usuario: Muestra resultados correspondientes (con etiqueta "Finalizado" si aplica)
+    Note over Usuario,ModOrganizador: 2. Exploración y Filtros (HU1, HU2, HU3)
+    opt Filtrar por Clificación, Eventos pasados o búsqueda
+        Usuario->>Sistema: aplicar_filtro(criterio)
+        Sistema->>ModOrganizador: buscar_eventos_por_filtro(criterio)
+        ModOrganizador-->>Sistema: retornar_eventos_filtrados(lista_eventos)
+        
+        Sistema->>ModResenas: solicitar_calificaciones_basicas(lista_id_eventos)
+        ModResenas-->>Sistema: retornar_calificaciones_basicas(calificaciones_o_vacio)
+        
+        Sistema-->>Usuario: mostrar_resultados_filtrados()
     end
 
     %% Flujo 3: Detalle del Evento (HU4)
     Note over Usuario,ModResenas: 3. Detalle de Evento (HU4)
-    Usuario->>Sistema: Selecciona un evento para ver detalle
+    Usuario->>Sistema: seleccionar_evento(id_evento)
     par Consulta de datos completos y reseñas
-        Sistema->>ModOrganizador: Solicita detalle completo del evento (descripción, precios finales y disponibilidad)
-        ModOrganizador-->>Sistema: Retorna información detallada
+        Sistema->>ModOrganizador: solicitar_detalle_evento(id_evento)
+        ModOrganizador-->>Sistema: retornar_detalle_evento()
     and
-        Sistema->>ModResenas: Consulta calificaciones y opiniones
-        ModResenas-->>Sistema: Retorna puntaje del evento/organizador
+        Sistema->>ModResenas: consultar_resenas_completas(id_evento)
+        Note over ModResenas,Sistema: Pide opiniones y notas. Puede retornar vacío si el evento no tiene reseñas.
+        ModResenas-->>Sistema: retornar_resenas_completas(datos_o_vacio)
     end
 
     alt Evento Pasado
-        Sistema-->>Usuario: Muestra detalle, reseñas y botón inactivo ("Evento finalizado")
+        Sistema-->>Usuario: mostrar_detalle_pasado_boton_deshabilitado()
     else Evento Futuro / Vigente (Agotado)
-        Sistema-->>Usuario: Muestra detalle con etiqueta "Agotado" (compra deshabilitada)
+        Sistema-->>Usuario: mostrar_detalle_agotado_compra_deshabilitada()
     else Evento Futuro / Vigente (Disponible)
-        Sistema-->>Usuario: Muestra detalle, reseñas, precio final y botón de acción ("Reservar" / "Comprar entrada")
+        Sistema-->>Usuario: mostrar_detalle_disponible_con_opcion_compra()
     end
 
     %% Flujo 4: Secuencia de Compra
-    Note over Usuario,ModOrganizador: 4. Proceso de Compra y Actualización de Stock
-    Usuario->>Sistema: Hace clic en "Comprar entrada" / "Pagar"
-    Sistema->>ModOrganizador: Envía solicitud de compra (id_evento, tipo_entrada, cantidad)
-    Note over ModOrganizador: Panel de Organización gestiona bloqueo, cobro y descuento de stock con los demás módulos
-    ModOrganizador-->>Sistema: Confirma compra exitosa y entrega nuevo stock/disponibilidad
-    Sistema-->>Sistema: Actualiza disponibilidad local del evento
-    Sistema-->>Usuario: Muestra pantalla de confirmación de compra / comprobante
+    Note over Usuario,ModInventario: 4. Proceso de Compra y Actualización de Stock
+    Usuario->>Sistema: solicitar_compra_entrada(id_evento, tipo_entrada, cantidad)
+    Sistema->>ModInventario: procesar_compra(id_evento, tipo_entrada, cantidad)
+    ModInventario-->>Sistema: confirmar_compra_exitosa(nuevo_stock)
+    Sistema->>Sistema: actualizar_disponibilidad(id_evento, nuevo_stock)
+    Sistema-->>Usuario: mostrar_confirmacion_compra()
