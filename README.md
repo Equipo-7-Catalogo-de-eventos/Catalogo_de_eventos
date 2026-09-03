@@ -2,12 +2,13 @@
 
 ## Información del Equipo
 
-* **Grupo 7:** [Catalogo de Eventos]
+* **Grupo 7:** Catalogo de Eventos
 * **Integrantes:**
-  * **Nombre:** [Amalia Toledo] — **Correo:** `[amalia.toledo@estudiantes.uv.cl]`
-  * **Nombre:** [Maximiliano Rozas] — **Correo:** `[maximiliano.rozas@estudiantes.uv.cl]`
-  * **Nombre:** [Anaís Muñoz] — **Correo:** `[anais.munozm@estudiantes.uv.cl]`
-  * **Nombre:** [Diego Valenzuela] — **Correo:** `[diego.valenzuelap@estudiantes.uv.cl]`
+  * **Nombre:** Amalia Toledo — **Correo:** `amalia.toledo@estudiantes.uv.cl`
+  * **Nombre:** Maximiliano Rozas — **Correo:** `maximiliano.rozas@estudiantes.uv.cl`
+  * **Nombre:** Anaís Muñoz — **Correo:** `anais.munozm@estudiantes.uv.cl`
+  * **Nombre:** Diego Valenzuela — **Correo:** `diego.valenzuelap@estudiantes.uv.cl`
+  * **Nombre:** Gladys Carvacho — **Correo:** `gladys.carvacho@estudiantes.uv.cl`
 
 ---
 
