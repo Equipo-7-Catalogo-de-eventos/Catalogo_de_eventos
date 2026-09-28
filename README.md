@@ -2,8 +2,8 @@
 
 Repositorio de **Arquitectura, Contratos de Interfaz, Hitos y Modelo de Datos** del microservicio de Catálogo de Eventos (TicketU).
 
-> 💡 **Código fuente del Microservicio:** El código fuente ejecutable del backend (Node.js/Express) se encuentra en su propio repositorio dedicado:  
-> 👉 **[ms-catalogo-eventos](https://github.com/Equipo-7-Catalogo-de-eventos/ms-catalogo-eventos)**
+> **Código fuente del Microservicio:** El código fuente ejecutable del backend (Node.js/Express) se encuentra en su propio repositorio dedicado:  
+> **[ms-catalogo-eventos](https://github.com/Equipo-7-Catalogo-de-eventos/ms-catalogo-eventos)**
 
 ---
 
