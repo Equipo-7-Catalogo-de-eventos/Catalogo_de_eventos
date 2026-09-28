@@ -1,5 +1,12 @@
 # Sistema de Catálogo y Gestión de Eventos
 
+Repositorio de **Arquitectura, Contratos de Interfaz, Hitos y Modelo de Datos** del microservicio de Catálogo de Eventos (TicketU).
+
+> 💡 **Código fuente del Microservicio:** El código fuente ejecutable del backend (Node.js/Express) se encuentra en su propio repositorio dedicado:  
+> 👉 **[ms-catalogo-eventos](https://github.com/Equipo-7-Catalogo-de-eventos/ms-catalogo-eventos)**
+
+---
+
 ## Información del Equipo
 
 * **Grupo 7:** Catálogo de Eventos
@@ -91,30 +98,27 @@ Los acuerdos de integración y especificaciones de endpoints pactados con los ot
 
 ---
 
-## Estructura del Proyecto
+## Hitos y Planificación
+
+El seguimiento de los sprints, entregables y estado de cada etapa se encuentra detallado en:
+* [**docs/milestones.md**](docs/milestones.md)
+
+---
+
+## Estructura del Repositorio
 
 ```text
 Catalogo_de_eventos/
 ├── docs/
 │   ├── diagrams/
-│   │   └── README.md                       # Diagrama de secuencia y arquitectura
+│   │   └── README.md                       # Explicación de flujos y arquitectura
 │   ├── CONTRATO_CATALOGO_PANEL.md          # Contrato con Panel Organizador
 │   ├── CONTRATO_CATALOGO_RESENAS.md        # Contrato con Módulo Reseñas
 │   ├── CONTRATO_CATALOGO_ENTRADAS.md       # Contrato de solicitud de compra con Entradas
-│   └── CONTRATO_ENTRADAS_CATALOGO.md       # Contrato de actualización de stock desde Entradas
-├── src/
-│   ├── config/
-│   │   └── supabase.js                     # Conexión al cliente de Supabase
-│   ├── controllers/
-│   │   └── eventController.js              # Lógica de negocio y consultas de eventos
-│   ├── routes/
-│   │   └── eventRoutes.js                  # Definición de rutas REST
-│   └── index.js                            # Punto de entrada Express y Swagger
+│   ├── CONTRATO_ENTRADAS_CATALOGO.md       # Contrato de actualización de stock desde Entradas
+│   └── milestones.md                       # Planificación y estado de hitos
 ├── schema_db.sql                           # Esquema DDL e inserción de datos de prueba en PostgreSQL/Supabase
-├── .env.example                            # Plantilla de variables de entorno
-├── .gitignore                              # Archivos ignorados por Git
-├── package.json
-└── README.md
+└── README.md                               # Documento principal del repositorio
 ```
 
 ---
@@ -128,36 +132,7 @@ El diseño del modelo relacional se encuentra en [`schema_db.sql`](schema_db.sql
 
 ---
 
-## Puesta en Marcha del Backend
+## Repositorio del Backend
 
-### 1. Requisitos
-* [Node.js](https://nodejs.org/) (versión 18 o superior)
-* Proyecto configurado en [Supabase](https://supabase.com/)
-
-### 2. Instalación de dependencias
-```bash
-npm install
-```
-
-### 3. Configuración de variables de entorno
-Copia el archivo `.env.example` como `.env` y completa tus credenciales:
-```bash
-cp .env.example .env
-```
-Configura los valores correspondientes:
-```env
-PORT=3000
-SUPABASE_URL=https://tu-proyecto.supabase.co
-SUPABASE_KEY=tu-clave-anonima-o-service-role
-```
-
-### 4. Ejecución en desarrollo
-```bash
-npm run dev
-```
-
-### 5. Documentación Interactiva y Health Check
-Una vez iniciado el servidor:
-* **API Documentation (Swagger UI):** `http://localhost:3000/api-docs`
-* **Health Check:** `http://localhost:3000/health`
-* **Listado de Eventos:** `GET http://localhost:3000/api/v1/events`
+Para clonar y ejecutar el código del microservicio, visita el repositorio:  
+🔗 **[Equipo-7-Catalogo-de-eventos / ms-catalogo-eventos](https://github.com/Equipo-7-Catalogo-de-eventos/ms-catalogo-eventos)**
