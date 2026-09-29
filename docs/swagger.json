@@ -1,0 +1,196 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API Microservicio Catálogo de Eventos - Equipo 7",
+    "description": "Especificación OpenAPI 3.0 para el microservicio Catálogo de Eventos (TicketU). Incluye los endpoints expuestos a otros squads (Reseñas y Entradas) y los endpoints del catálogo.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.ticketu.cl/api/v1",
+      "description": "Servidor de Producción / API Gateway"
+    },
+    {
+      "url": "http://localhost:3000/api/v1",
+      "description": "Servidor de Desarrollo Local"
+    }
+  ],
+  "paths": {
+    "/catalogo/eventos/{id_evento}": {
+      "get": {
+        "summary": "Verificar existencia y datos básicos del evento (Consumido por Reseñas)",
+        "description": "Permite al microservicio de Reseñas verificar si un evento existe antes de permitir escribir una reseña y obtener información de contexto.",
+        "tags": [
+          "Integración con Reseñas"
+        ],
+        "parameters": [
+          {
+            "name": "id_evento",
+            "in": "path",
+            "required": true,
+            "description": "ID único del evento",
+            "schema": {
+              "type": "string",
+              "example": "evt_123456"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evento encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "existe": true,
+                  "id_evento": "evt_123456",
+                  "nombre": "Festival de Música TicketU 2026",
+                  "fecha": "2026-10-15T20:00:00Z",
+                  "tipo": "pagado"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Evento no existe",
+            "content": {
+              "application/json": {
+                "example": {
+                  "existe": false,
+                  "id_evento": "evt_123456"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalogo/eventos/{id_evento}/stock": {
+      "put": {
+        "summary": "Actualizar stock de evento tras compra (Consumido por Entradas/Inventario)",
+        "description": "Permite al microservicio de Entradas notificar al Catálogo sobre el nuevo stock disponible tras completar una transacción.",
+        "tags": [
+          "Integración con Entradas"
+        ],
+        "parameters": [
+          {
+            "name": "id_evento",
+            "in": "path",
+            "required": true,
+            "description": "ID del evento a actualizar",
+            "schema": {
+              "type": "string",
+              "example": "evt_123456"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "nuevo_stock"
+                ],
+                "properties": {
+                  "nuevo_stock": {
+                    "type": "integer",
+                    "example": 45,
+                    "description": "Cantidad de entradas restantes"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stock actualizado correctamente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "mensaje": "Stock actualizado exitosamente",
+                  "id_evento": "evt_123456",
+                  "nuevo_stock": 45
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Formato de solicitud inválido"
+          },
+          "404": {
+            "description": "Evento no encontrado"
+          }
+        }
+      }
+    },
+    "/organizador/eventos/proximos": {
+      "get": {
+        "summary": "Obtener eventos próximos para la carga inicial de la Home",
+        "tags": [
+          "Catálogo de Eventos"
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de eventos próximos cargados exitosamente",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id_evento": "evt_123456",
+                    "titulo": "Festival de Música TicketU 2026",
+                    "lugar": "Movistar Arena, Santiago",
+                    "fecha": "2026-10-15T20:00:00Z",
+                    "imagen": "https://cdn.ticketu.cl/images/evt_123456.jpg",
+                    "stock": 45,
+                    "precio_final": 25000,
+                    "estado": "DISPONIBLE"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizador/eventos/buscar": {
+      "post": {
+        "summary": "Buscar y filtrar eventos por categoría, fecha o texto",
+        "tags": [
+          "Catálogo de Eventos"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "texto": "musica",
+                "categoria": "Conciertos",
+                "fecha_inicio": "2026-10-01",
+                "fecha_fin": "2026-10-31"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resultados de búsqueda filtrados",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id_evento": "evt_123456",
+                    "titulo": "Festival de Música TicketU 2026",
+                    "categoria": "Conciertos",
+                    "precio_final": 25000
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
