@@ -18,17 +18,6 @@ Repositorio de **Arquitectura, Contratos de Interfaz, Hitos y Modelo de Datos** 
   * **Nombre:** Gladys Carvacho — **Correo:** `gladys.carvacho@estudiantes.uv.cl`
 
 ---
-## Asignación de Responsables por Rol
-
-| Rol | Ítems de la rúbrica | Responsable(s) |
-| :--- | :--- | :--- |
-| **Back End** | BE1, BE2, BE3 | Maximiliano Rozas |
-| **Base de Datos** | BD1, BD2, BD3, BD4 | Anais Muñoz |
-| **UI/UX (front end)** | UI1, UI2, UI3 | Amalia Catalina Toledo |
-| **Gestión** | GE1, GE2, GE3, GE4 | Gladys Carvacho y Diego Valenzuela |
-| **Calidad** | CA1, CA2 | Gladys Carvacho |
-
----
 
 
 ## Diagrama de Secuencia
