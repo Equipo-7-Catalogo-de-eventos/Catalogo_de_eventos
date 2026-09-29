@@ -2,33 +2,51 @@
   "openapi": "3.0.3",
   "info": {
     "title": "API Microservicio Catálogo de Eventos - Equipo 7",
-    "description": "Especificación OpenAPI 3.0 para el microservicio Catálogo de Eventos (TicketU). Incluye los endpoints expuestos a otros squads (Reseñas y Entradas) y los endpoints del catálogo.",
+    "description": "Especificación OpenAPI 3.0 completa para el microservicio Catálogo de Eventos (TicketU). Incluye todos los endpoints expuestos a otros squads (Reseñas y Entradas) y los endpoints consumidos de Panel Organizador, Reseñas y Entradas.",
     "version": "1.0.0"
   },
   "servers": [
     {
       "url": "https://api.ticketu.cl/api/v1",
-      "description": "Servidor de Producción / API Gateway"
+      "description": "Servidor API Gateway / Producción"
     },
     {
       "url": "http://localhost:3000/api/v1",
-      "description": "Servidor de Desarrollo Local"
+      "description": "Servidor Local de Desarrollo"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Endpoints Expuestos",
+      "description": "Endpoints que Catálogo expone a otros microservicios"
+    },
+    {
+      "name": "Integración con Panel Organizador",
+      "description": "Endpoints consumidos del Panel Organizador"
+    },
+    {
+      "name": "Integración con Reseñas",
+      "description": "Endpoints consumidos del microservicio de Reseñas"
+    },
+    {
+      "name": "Integración con Entradas e Inventario",
+      "description": "Endpoints consumidos del microservicio de Entradas"
     }
   ],
   "paths": {
     "/catalogo/eventos/{id_evento}": {
       "get": {
-        "summary": "Verificar existencia y datos básicos del evento (Consumido por Reseñas)",
-        "description": "Permite al microservicio de Reseñas verificar si un evento existe antes de permitir escribir una reseña y obtener información de contexto.",
+        "summary": "Validar existencia y datos de contexto del evento",
+        "description": "Endpoint expuesto para el microservicio de Reseñas (Contrato_Catalogo_de_eventos.pdf). Permite validar si un evento existe antes de registrar una opinión.",
         "tags": [
-          "Integración con Reseñas"
+          "Endpoints Expuestos"
         ],
         "parameters": [
           {
             "name": "id_evento",
             "in": "path",
             "required": true,
-            "description": "ID único del evento",
+            "description": "ID del evento",
             "schema": {
               "type": "string",
               "example": "evt_123456"
@@ -66,10 +84,10 @@
     },
     "/catalogo/eventos/{id_evento}/stock": {
       "put": {
-        "summary": "Actualizar stock de evento tras compra (Consumido por Entradas/Inventario)",
-        "description": "Permite al microservicio de Entradas notificar al Catálogo sobre el nuevo stock disponible tras completar una transacción.",
+        "summary": "Actualizar stock de evento tras compra",
+        "description": "Endpoint expuesto para el microservicio de Entradas (Contrato_Entradas_Catalogo.docx.pdf). Recibe la actualización del nuevo_stock vía HTTP REST (PUT).",
         "tags": [
-          "Integración con Entradas"
+          "Endpoints Expuestos"
         ],
         "parameters": [
           {
@@ -96,7 +114,7 @@
                   "nuevo_stock": {
                     "type": "integer",
                     "example": 45,
-                    "description": "Cantidad de entradas restantes"
+                    "description": "Nuevo stock disponible"
                   }
                 }
               }
@@ -105,7 +123,7 @@
         },
         "responses": {
           "200": {
-            "description": "Stock actualizado correctamente",
+            "description": "Stock actualizado exitosamente",
             "content": {
               "application/json": {
                 "example": {
@@ -117,7 +135,7 @@
             }
           },
           "400": {
-            "description": "Formato de solicitud inválido"
+            "description": "Solicitud inválida"
           },
           "404": {
             "description": "Evento no encontrado"
@@ -127,13 +145,14 @@
     },
     "/organizador/eventos/proximos": {
       "get": {
-        "summary": "Obtener eventos próximos para la carga inicial de la Home",
+        "summary": "Carga inicial de eventos próximos (Home)",
+        "description": "Consumido de Panel Organizador (Contrato_Catalogo_PanelOrganizador.docx). Retorna lista de tarjetas para la Home.",
         "tags": [
-          "Catálogo de Eventos"
+          "Integración con Panel Organizador"
         ],
         "responses": {
           "200": {
-            "description": "Lista de eventos próximos cargados exitosamente",
+            "description": "Lista de eventos próximos",
             "content": {
               "application/json": {
                 "example": [
@@ -156,9 +175,10 @@
     },
     "/organizador/eventos/buscar": {
       "post": {
-        "summary": "Buscar y filtrar eventos por categoría, fecha o texto",
+        "summary": "Búsqueda y filtrado de eventos",
+        "description": "Consumido de Panel Organizador (Contrato_Catalogo_PanelOrganizador.docx). Filtra por texto, categoría y rango de fechas.",
         "tags": [
-          "Catálogo de Eventos"
+          "Integración con Panel Organizador"
         ],
         "requestBody": {
           "required": true,
@@ -175,7 +195,7 @@
         },
         "responses": {
           "200": {
-            "description": "Resultados de búsqueda filtrados",
+            "description": "Resultados filtrados",
             "content": {
               "application/json": {
                 "example": [
@@ -186,6 +206,169 @@
                     "precio_final": 25000
                   }
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizador/eventos/{id_evento}": {
+      "get": {
+        "summary": "Obtener detalle completo de un evento",
+        "description": "Consumido de Panel Organizador (Contrato_Catalogo_PanelOrganizador.docx). Retorna la información completa para la pantalla de detalle.",
+        "tags": [
+          "Integración con Panel Organizador"
+        ],
+        "parameters": [
+          {
+            "name": "id_evento",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "evt_123456"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalle del evento cargado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id_evento": "evt_123456",
+                  "titulo": "Festival de Música TicketU 2026",
+                  "descripcion": "El festival universitario más grande del año.",
+                  "lugar": "Movistar Arena, Santiago",
+                  "fecha": "2026-10-15T20:00:00Z",
+                  "imagen": "https://cdn.ticketu.cl/images/evt_123456.jpg",
+                  "stock": 45,
+                  "precio_final": 25000,
+                  "estado": "DISPONIBLE",
+                  "organizador": "Federación de Estudiantes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resenas/calificaciones-basicas": {
+      "post": {
+        "summary": "Obtener promedios de estrellas en bloque",
+        "description": "Consumido de Reseñas (Contrato_Catalogo_Resenas.docx). Solicita calificaciones para una lista de IDs de eventos.",
+        "tags": [
+          "Integración con Reseñas"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "eventos_ids": [
+                  "evt_123456",
+                  "evt_789012"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Promedios de calificaciones",
+            "content": {
+              "application/json": {
+                "example": {
+                  "calificaciones": [
+                    {
+                      "id_evento": "evt_123456",
+                      "promedio_estrellas": 4.8,
+                      "total_resenas": 124
+                    },
+                    {
+                      "id_evento": "evt_789012",
+                      "promedio_estrellas": 4.2,
+                      "total_resenas": 45
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resenas/evento/{id_evento}": {
+      "get": {
+        "summary": "Obtener comentarios individuales de un evento",
+        "description": "Consumido de Reseñas (Contrato_Catalogo_Resenas.docx). Carga la lista de reseñas para el detalle del evento.",
+        "tags": [
+          "Integración con Reseñas"
+        ],
+        "parameters": [
+          {
+            "name": "id_evento",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "evt_123456"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comentarios del evento",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id_resena": "res_001",
+                    "calificacion": 5,
+                    "comentario": "¡Excelente organización y gran sonido!",
+                    "fecha": "2026-09-20T14:30:00Z"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entradas/procesar-compra": {
+      "post": {
+        "summary": "Solicitar reserva / procesar compra de entradas",
+        "description": "Consumido de Entradas e Inventario (Contrato_Catalogo_EntradasInventario.docx). Inicia la reserva de tickets.",
+        "tags": [
+          "Integración con Entradas e Inventario"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "id_evento": "evt_123456",
+                "cantidad": 2,
+                "token_sesion": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reserva procesada exitosamente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "exito": true,
+                  "mensaje": "Reserva confirmada con éxito",
+                  "codigo_reserva": "RES-2026-9981",
+                  "detalles_compra": {
+                    "id_evento": "evt_123456",
+                    "cantidad": 2,
+                    "monto_total": 50000
+                  }
+                }
               }
             }
           }
