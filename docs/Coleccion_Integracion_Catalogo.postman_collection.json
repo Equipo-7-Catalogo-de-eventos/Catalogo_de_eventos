@@ -1,0 +1,235 @@
+{
+  "info": {
+    "name": "Coleccion_Integracion_Catalogo_de_Eventos",
+    "description": "Colección de Postman para las pruebas de integración del microservicio Catálogo de Eventos (Equipo 7). Incluye pruebas hacia Panel Organizador, Reseñas y Entradas.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Integración con Panel Organizador",
+      "item": [
+        {
+          "name": "GET Proximos Eventos (Home)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/v1/organizador/eventos/proximos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "organizador",
+                "eventos",
+                "proximos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST Buscar Eventos con Filtros",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"texto\": \"rock\",\n  \"categoria\": \"Conciertos\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/v1/organizador/eventos/buscar",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "organizador",
+                "eventos",
+                "buscar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Detalle de Evento",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/v1/organizador/eventos/evt_123456",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "organizador",
+                "eventos",
+                "evt_123456"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Integración con Reseñas",
+      "item": [
+        {
+          "name": "POST Obtener Calificaciones Básicas en Bloque",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventos_ids\": [\"evt_123456\", \"evt_789012\"]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/v1/resenas/calificaciones-basicas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "resenas",
+                "calificaciones-basicas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET Reseñas de un Evento (Detalle)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/v1/resenas/evento/evt_123456",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "resenas",
+                "evento",
+                "evt_123456"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET [Expuesto] Validar Existencia de Evento para Reseñas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/v1/catalogo/eventos/evt_123456",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "catalogo",
+                "eventos",
+                "evt_123456"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Integración con Entradas e Inventario",
+      "item": [
+        {
+          "name": "POST Procesar Compra de Entradas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_evento\": \"evt_123456\",\n  \"cantidad\": 2,\n  \"token_sesion\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/v1/entradas/procesar-compra",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "entradas",
+                "procesar-compra"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT [Expuesto] Actualizar Stock en Catálogo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nuevo_stock\": 43\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/v1/catalogo/eventos/evt_123456/stock",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "v1",
+                "catalogo",
+                "eventos",
+                "evt_123456",
+                "stock"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
