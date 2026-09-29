@@ -1,15 +1,15 @@
 {
   "info": {
     "name": "Coleccion_Integracion_Catalogo_de_Eventos",
-    "description": "Colección de Postman para las pruebas de integración del microservicio Catálogo de Eventos (Equipo 7). Incluye pruebas hacia Panel Organizador, Reseñas y Entradas.",
+    "description": "Colección completa de Postman para las pruebas de integración del microservicio Catálogo de Eventos (Equipo 7). Incluye todas las solicitudes de los contratos enviados y recibidos con Panel Organizador, Reseñas y Entradas.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "1. Integración con Panel Organizador",
+      "name": "1. Integración con Panel Organizador (Contrato_Catalogo_PanelOrganizador.docx)",
       "item": [
         {
-          "name": "GET Proximos Eventos (Home)",
+          "name": "GET /organizador/eventos/proximos (Home)",
           "request": {
             "method": "GET",
             "header": [],
@@ -31,7 +31,7 @@
           }
         },
         {
-          "name": "POST Buscar Eventos con Filtros",
+          "name": "POST /organizador/eventos/buscar (Filtros)",
           "request": {
             "method": "POST",
             "header": [
@@ -42,7 +42,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"texto\": \"rock\",\n  \"categoria\": \"Conciertos\"\n}"
+              "raw": "{\n  \"texto\": \"rock\",\n  \"categoria\": \"Conciertos\",\n  \"fecha_inicio\": \"2026-10-01\",\n  \"fecha_fin\": \"2026-10-31\"\n}"
             },
             "url": {
               "raw": "http://localhost:3000/api/v1/organizador/eventos/buscar",
@@ -62,7 +62,7 @@
           }
         },
         {
-          "name": "GET Detalle de Evento",
+          "name": "GET /organizador/eventos/{id_evento} (Detalle)",
           "request": {
             "method": "GET",
             "header": [],
@@ -86,10 +86,10 @@
       ]
     },
     {
-      "name": "2. Integración con Reseñas",
+      "name": "2. Integración con Reseñas (Contrato_Catalogo_Resenas.docx & Contrato_Resenas_Catalogo_Eventos.docx)",
       "item": [
         {
-          "name": "POST Obtener Calificaciones Básicas en Bloque",
+          "name": "POST /resenas/calificaciones-basicas (Promedios Home)",
           "request": {
             "method": "POST",
             "header": [
@@ -119,7 +119,7 @@
           }
         },
         {
-          "name": "GET Reseñas de un Evento (Detalle)",
+          "name": "GET /resenas/evento/{id_evento} (Comentarios Detalle)",
           "request": {
             "method": "GET",
             "header": [],
@@ -141,7 +141,7 @@
           }
         },
         {
-          "name": "GET [Expuesto] Validar Existencia de Evento para Reseñas",
+          "name": "GET [EXPUESTO] /catalogo/eventos/{id_evento} (Validar Existencia para Reseñas)",
           "request": {
             "method": "GET",
             "header": [],
@@ -165,10 +165,10 @@
       ]
     },
     {
-      "name": "3. Integración con Entradas e Inventario",
+      "name": "3. Integración con Entradas e Inventario (Contrato_Catalogo_EntradasInventario.docx & Contrato_Entradas_Catalogo.docx.pdf)",
       "item": [
         {
-          "name": "POST Procesar Compra de Entradas",
+          "name": "POST /entradas/procesar-compra (Solicitud Reserva)",
           "request": {
             "method": "POST",
             "header": [
@@ -198,7 +198,7 @@
           }
         },
         {
-          "name": "PUT [Expuesto] Actualizar Stock en Catálogo",
+          "name": "PUT [EXPUESTO] /catalogo/eventos/{id_evento}/stock (Actualización Stock tras Compra)",
           "request": {
             "method": "PUT",
             "header": [
