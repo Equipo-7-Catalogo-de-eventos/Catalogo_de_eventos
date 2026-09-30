@@ -107,5 +107,7 @@ PUT /api/v1/catalogo/eventos/{id_evento}/stock
 
 ## 6. Acuerdos y Decisiones Tomadas
 
-* [x] Se confirma con Catálogo que esta actualización será estrictamente vía HTTP REST (PUT). De momento se usará HTTP REST y no RabbitMQ ni PATCH.
+* [x] **Resolución HU5 / Protocolo:** Se confirma entre Catálogo y Entradas que la actualización de stock se realiza estrictamente vía HTTP REST (`PUT /api/catalogo/eventos/{id_evento}/stock`). Aunque la descripción inicial de HU5 mencionaba la posibilidad de un broker de mensajería (RabbitMQ/Kafka), por mutuo acuerdo técnico y para garantizar consistencia y el SLA de respuesta (< 500 ms) sin sobrecarga de infraestructura, se descartó el broker y se formalizó el uso de HTTP REST síncrono.
+* [x] **Regla de agotado automático:** Si `nuevo_stock === 0`, Catálogo actualiza de inmediato el estado del evento a `'agotado'`. Si `nuevo_stock > 0` y estaba agotado, se reactiva a `'disponible'`.
 * [x] Se confirma que Catálogo no necesita ningún dato adicional del evento, solo el campo `nuevo_stock` y el `token_sesion`.
+
