@@ -1,84 +1,48 @@
 {
   "info": {
-    "name": "Coleccion_Integracion_Catalogo_de_Eventos",
-    "description": "Colección completa de Postman para las pruebas de integración del microservicio Catálogo de Eventos (Equipo 7). Incluye todas las solicitudes de los contratos enviados y recibidos con Panel Organizador, Reseñas y Entradas.",
+    "name": "Coleccion_Integracion_Catalogo_de_Eventos_v2",
+    "description": "Colección oficial de pruebas de integración para el microservicio Catálogo de Eventos (ms-catalogo-eventos). Alineada con los endpoints principales del proyecto.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
   "item": [
     {
-      "name": "1. Integración con Panel Organizador (Contrato_Catalogo_PanelOrganizador.docx)",
+      "name": "1. Sistema y Monitoreo",
       "item": [
         {
-          "name": "GET /organizador/eventos/proximos (Home)",
+          "name": "GET Health Check",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:3000/api/v1/organizador/eventos/proximos",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/health",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "3000",
               "path": [
-                "api",
-                "v1",
-                "organizador",
-                "eventos",
-                "proximos"
+                "health"
               ]
             }
           }
         },
         {
-          "name": "POST /organizador/eventos/buscar (Filtros)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"texto\": \"rock\",\n  \"categoria\": \"Conciertos\",\n  \"fecha_inicio\": \"2026-10-01\",\n  \"fecha_fin\": \"2026-10-31\"\n}"
-            },
-            "url": {
-              "raw": "http://localhost:3000/api/v1/organizador/eventos/buscar",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "v1",
-                "organizador",
-                "eventos",
-                "buscar"
-              ]
-            }
-          }
-        },
-        {
-          "name": "GET /organizador/eventos/{id_evento} (Detalle)",
+          "name": "GET Swagger OpenAPI Docs",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:3000/api/v1/organizador/eventos/evt_123456",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api-docs",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "3000",
               "path": [
-                "api",
-                "v1",
-                "organizador",
-                "eventos",
-                "evt_123456"
+                "api-docs"
               ]
             }
           }
@@ -86,75 +50,60 @@
       ]
     },
     {
-      "name": "2. Integración con Reseñas (Contrato_Catalogo_Resenas.docx & Contrato_Resenas_Catalogo_Eventos.docx)",
+      "name": "2. API Principal Catálogo de Eventos",
       "item": [
         {
-          "name": "POST /resenas/calificaciones-basicas (Promedios Home)",
+          "name": "GET Listar Eventos (Paginación y Filtros)",
           "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"eventos_ids\": [\"evt_123456\", \"evt_789012\"]\n}"
-            },
+            "method": "GET",
+            "header": [],
             "url": {
-              "raw": "http://localhost:3000/api/v1/resenas/calificaciones-basicas",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/catalogo/eventos?busqueda=rock&categoria=Conciertos&estado=proximos&page=1&limit=10",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "3000",
               "path": [
                 "api",
-                "v1",
-                "resenas",
-                "calificaciones-basicas"
+                "catalogo",
+                "eventos"
+              ],
+              "query": [
+                {
+                  "key": "busqueda",
+                  "value": "rock"
+                },
+                {
+                  "key": "categoria",
+                  "value": "Conciertos"
+                },
+                {
+                  "key": "estado",
+                  "value": "proximos"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
               ]
             }
           }
         },
         {
-          "name": "GET /resenas/evento/{id_evento} (Comentarios Detalle)",
+          "name": "GET Detalle de Evento con es_pasado",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:3000/api/v1/resenas/evento/evt_123456",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/catalogo/eventos/evt_123456",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "3000",
               "path": [
                 "api",
-                "v1",
-                "resenas",
-                "evento",
-                "evt_123456"
-              ]
-            }
-          }
-        },
-        {
-          "name": "GET [EXPUESTO] /catalogo/eventos/{id_evento} (Validar Existencia para Reseñas)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:3000/api/v1/catalogo/eventos/evt_123456",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "v1",
                 "catalogo",
                 "eventos",
                 "evt_123456"
@@ -165,40 +114,30 @@
       ]
     },
     {
-      "name": "3. Integración con Entradas e Inventario (Contrato_Catalogo_EntradasInventario.docx & Contrato_Entradas_Catalogo.docx.pdf)",
+      "name": "3. Endpoints Expuestos a Otros Squads (BE3 / Contratos)",
       "item": [
         {
-          "name": "POST /entradas/procesar-compra (Solicitud Reserva)",
+          "name": "GET Info Servicio para Reseñas y Promociones (BE3)",
           "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"id_evento\": \"evt_123456\",\n  \"cantidad\": 2,\n  \"token_sesion\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}"
-            },
+            "method": "GET",
+            "header": [],
             "url": {
-              "raw": "http://localhost:3000/api/v1/entradas/procesar-compra",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/catalogo/eventos/evt_123456/info-servicio",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "3000",
               "path": [
                 "api",
-                "v1",
-                "entradas",
-                "procesar-compra"
+                "catalogo",
+                "eventos",
+                "evt_123456",
+                "info-servicio"
               ]
             }
           }
         },
         {
-          "name": "PUT [EXPUESTO] /catalogo/eventos/{id_evento}/stock (Actualización Stock tras Compra)",
+          "name": "PUT Actualizar Stock desde Entradas/Inventario",
           "request": {
             "method": "PUT",
             "header": [
@@ -212,19 +151,77 @@
               "raw": "{\n  \"nuevo_stock\": 43\n}"
             },
             "url": {
-              "raw": "http://localhost:3000/api/v1/catalogo/eventos/evt_123456/stock",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/catalogo/eventos/evt_123456/stock",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "3000",
               "path": [
                 "api",
-                "v1",
                 "catalogo",
                 "eventos",
                 "evt_123456",
                 "stock"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Consumo de Servicios Externos (Integración Inter-Squads)",
+      "item": [
+        {
+          "name": "POST Obtener Calificaciones en Bloque (Reseñas)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventos_ids\": [\"evt_123456\", \"evt_789012\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/resenas/calificaciones-basicas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "resenas",
+                "calificaciones-basicas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST Procesar Compra de Entradas (Entradas)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_evento\": \"evt_123456\",\n  \"cantidad\": 2,\n  \"token_sesion\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/entradas/procesar-compra",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "entradas",
+                "procesar-compra"
               ]
             }
           }
