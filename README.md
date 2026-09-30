@@ -1,9 +1,9 @@
 # Sistema de Catálogo y Gestión de Eventos
 
-Repositorio de **Arquitectura, Contratos de Interfaz, Hitos y Modelo de Datos** del microservicio de Catálogo de Eventos (TicketU).
+Repositorio de **Arquitectura, Contratos de Interfaz, Hitos, Swagger y Modelo de Datos** del microservicio de Catálogo de Eventos (TicketU).
 
-> **Código fuente del Microservicio:** El código fuente ejecutable del backend (Node.js/Express) se encuentra en su propio repositorio dedicado:  
-> **[ms-catalogo-eventos](https://github.com/Equipo-7-Catalogo-de-eventos/ms-catalogo-eventos)**
+> 💡 **Código fuente del Microservicio:** El código ejecutable del backend (Node.js/Express) con Docker se encuentra en su propio repositorio dedicado:  
+> 👉 **[ms-catalogo-eventos](https://github.com/Equipo-7-Catalogo-de-eventos/ms-catalogo-eventos)**
 
 ---
 
@@ -18,7 +18,6 @@ Repositorio de **Arquitectura, Contratos de Interfaz, Hitos y Modelo de Datos** 
   * **Nombre:** Gladys Carvacho — **Correo:** `gladys.carvacho@estudiantes.uv.cl`
 
 ---
-
 
 ## Diagrama de Secuencia
 
@@ -95,7 +94,14 @@ Los acuerdos de integración y especificaciones de endpoints pactados con los ot
 | [**CONTRATO_CATALOGO_PANEL.md**](docs/CONTRATO_CATALOGO_PANEL.md) | Catálogo de Eventos | Panel Organizador | Consulta de eventos próximos, filtros y ficha de detalle. |
 | [**CONTRATO_CATALOGO_RESENAS.md**](docs/CONTRATO_CATALOGO_RESENAS.md) | Catálogo de Eventos | Reseñas | Calificaciones básicas (estrellas) y comentarios completos. |
 | [**CONTRATO_CATALOGO_ENTRADAS.md**](docs/CONTRATO_CATALOGO_ENTRADAS.md) | Catálogo de Eventos | Entradas / Inventario | Solicitud de procesamiento de compra de entradas. |
-| [**CONTRATO_ENTRADAS_CATALOGO.md**](docs/CONTRATO_ENTRADAS_CATALOGO.md) | Entradas / Inventario | Catálogo de Eventos | Actualización de stock en el catálogo tras compra exitosa. |
+| [**CONTRATO_ENTRADAS_CATALOGO.md**](docs/CONTRATO_ENTRADAS_CATALOGO.md) | Entradas / Inventario | Catálogo de Eventos | Actualización de stock en el catálogo tras compra exitosa (Resolución formal HU5 vía REST). |
+
+---
+
+## Especificación OpenAPI / Swagger y Postman
+
+* **Especificación Swagger JSON:** [`docs/swagger.json`](docs/swagger.json)
+* **Colección de Pruebas Postman:** [`Integracion_Catalogo.postman_collection.json`](Integracion_Catalogo.postman_collection.json)
 
 ---
 
@@ -106,34 +112,9 @@ El seguimiento de los sprints, entregables y estado de cada etapa se encuentra d
 
 ---
 
-## Estructura del Repositorio
-
-```text
-Catalogo_de_eventos/
-├── docs/
-│   ├── diagrams/
-│   │   └── README.md                       # Explicación de flujos y arquitectura
-│   ├── CONTRATO_CATALOGO_PANEL.md          # Contrato con Panel Organizador
-│   ├── CONTRATO_CATALOGO_RESENAS.md        # Contrato con Módulo Reseñas
-│   ├── CONTRATO_CATALOGO_ENTRADAS.md       # Contrato de solicitud de compra con Entradas
-│   ├── CONTRATO_ENTRADAS_CATALOGO.md       # Contrato de actualización de stock desde Entradas
-│   └── milestones.md                       # Planificación y estado de hitos
-├── schema_db.sql                           # Esquema DDL e inserción de datos de prueba en PostgreSQL/Supabase
-└── README.md                               # Documento principal del repositorio
-```
-
----
-
 ## Base de Datos
 
 El diseño del modelo relacional se encuentra en [`schema_db.sql`](schema_db.sql). Utiliza PostgreSQL alojado en Supabase, incluyendo índices optimizados para:
 * Búsqueda por texto rápido (`GIN` con `to_tsvector` en español).
 * Filtrado acelerado por estado y categoría (`idx_eventos_estado_categoria`).
 * Ordenamiento cronológico de eventos (`idx_eventos_fecha`).
-
----
-
-## Repositorio del Backend
-
-Para clonar y ejecutar el código del microservicio, visita el repositorio:  
-🔗 **[Equipo-7-Catalogo-de-eventos / ms-catalogo-eventos](https://github.com/Equipo-7-Catalogo-de-eventos/ms-catalogo-eventos)**
