@@ -2,51 +2,182 @@
   "openapi": "3.0.3",
   "info": {
     "title": "API Microservicio Catálogo de Eventos - Equipo 7",
-    "description": "Especificación OpenAPI 3.0 completa para el microservicio Catálogo de Eventos (TicketU). Incluye todos los endpoints expuestos a otros squads (Reseñas y Entradas) y los endpoints consumidos de Panel Organizador, Reseñas y Entradas.",
+    "description": "Especificación OpenAPI 3.0 para el microservicio Catálogo de Eventos (TicketU - ms-catalogo-eventos). Contiene la API principal del catálogo, los endpoints expuestos a otros squads (Reseñas y Entradas/Inventario) y los endpoints del sistema.",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "https://api.ticketu.cl/api/v1",
-      "description": "Servidor API Gateway / Producción"
+      "url": "http://localhost:3000",
+      "description": "Servidor de Desarrollo Local"
     },
     {
-      "url": "http://localhost:3000/api/v1",
-      "description": "Servidor Local de Desarrollo"
+      "url": "https://api.ticketu.cl",
+      "description": "Servidor de Producción / API Gateway"
     }
   ],
   "tags": [
     {
-      "name": "Endpoints Expuestos",
-      "description": "Endpoints que Catálogo expone a otros microservicios"
+      "name": "Sistema y Monitoreo",
+      "description": "Endpoints de salud y documentación de la API"
     },
     {
-      "name": "Integración con Panel Organizador",
-      "description": "Endpoints consumidos del Panel Organizador"
+      "name": "Catálogo de Eventos",
+      "description": "Búsqueda, filtrado y detalle de eventos para clientes"
     },
     {
-      "name": "Integración con Reseñas",
-      "description": "Endpoints consumidos del microservicio de Reseñas"
+      "name": "Integración con Reseñas (BE3)",
+      "description": "Endpoints expuestos para la validación y datos mínimos de eventos"
     },
     {
-      "name": "Integración con Entradas e Inventario",
-      "description": "Endpoints consumidos del microservicio de Entradas"
+      "name": "Integración con Entradas / Inventario",
+      "description": "Endpoints expuestos para sincronización de stock de entradas"
     }
   ],
   "paths": {
-    "/catalogo/eventos/{id_evento}": {
+    "/health": {
       "get": {
-        "summary": "Validar existencia y datos de contexto del evento",
-        "description": "Endpoint expuesto para el microservicio de Reseñas (Contrato_Catalogo_de_eventos.pdf). Permite validar si un evento existe antes de registrar una opinión.",
+        "summary": "Chequeo de salud del servicio",
+        "description": "Verifica el estado operativo del microservicio y la disponibilidad del servidor Express.",
         "tags": [
-          "Endpoints Expuestos"
+          "Sistema y Monitoreo"
+        ],
+        "responses": {
+          "200": {
+            "description": "Servicio saludable y operativo",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "ok",
+                  "servicio": "ms-catalogo-eventos",
+                  "timestamp": "2026-09-29T20:45:00Z"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api-docs": {
+      "get": {
+        "summary": "Documentación interactiva Swagger OpenAPI 3.0",
+        "description": "Despliega la interfaz gráfica Swagger UI para exploración y prueba interactiva de endpoints.",
+        "tags": [
+          "Sistema y Monitoreo"
+        ],
+        "responses": {
+          "200": {
+            "description": "Interfaz Swagger UI cargada exitosamente"
+          }
+        }
+      }
+    },
+    "/api/catalogo/eventos": {
+      "get": {
+        "summary": "Listar eventos con filtros avanzados, búsqueda y paginación",
+        "description": "Obtiene la lista de eventos disponibles (próximos o pasados) con capacidades de filtro por texto, categoría y paginación.",
+        "tags": [
+          "Catálogo de Eventos"
         ],
         "parameters": [
           {
-            "name": "id_evento",
+            "name": "busqueda",
+            "in": "query",
+            "required": false,
+            "description": "Texto para filtrar por nombre o descripción del evento",
+            "schema": {
+              "type": "string",
+              "example": "rock"
+            }
+          },
+          {
+            "name": "categoria",
+            "in": "query",
+            "required": false,
+            "description": "Categoría temática del evento",
+            "schema": {
+              "type": "string",
+              "example": "Conciertos"
+            }
+          },
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "description": "Filtrar por estado del evento (proximos / pasados)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "proximos",
+                "pasados"
+              ],
+              "default": "proximos"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Número de página para la paginación",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Cantidad de eventos por página",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Listado de eventos obtenido exitosamente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "total": 1,
+                  "page": 1,
+                  "limit": 10,
+                  "data": [
+                    {
+                      "id": "evt_123456",
+                      "titulo": "Festival de Música TicketU 2026",
+                      "categoria": "Conciertos",
+                      "lugar": "Movistar Arena, Santiago",
+                      "fecha": "2026-10-15T20:00:00Z",
+                      "imagen": "https://cdn.ticketu.cl/images/evt_123456.jpg",
+                      "precio": 25000,
+                      "es_gratis": false,
+                      "es_pasado": false,
+                      "stock": 45,
+                      "estado": "DISPONIBLE"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/catalogo/eventos/{id}": {
+      "get": {
+        "summary": "Detalle del evento con notas y campo es_pasado",
+        "description": "Retorna la información completa de un evento específico, incluyendo notas organizativas, bandera es_pasado y resumen visual.",
+        "tags": [
+          "Catálogo de Eventos"
+        ],
+        "parameters": [
+          {
+            "name": "id",
             "in": "path",
             "required": true,
-            "description": "ID del evento",
+            "description": "Identificador único del evento",
             "schema": {
               "type": "string",
               "example": "evt_123456"
@@ -55,7 +186,63 @@
         ],
         "responses": {
           "200": {
-            "description": "Evento encontrado",
+            "description": "Detalle del evento obtenido exitosamente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "evt_123456",
+                  "titulo": "Festival de Música TicketU 2026",
+                  "descripcion": "El festival de música universitaria más grande del país.",
+                  "categoria": "Conciertos",
+                  "lugar": "Movistar Arena, Santiago",
+                  "fecha": "2026-10-15T20:00:00Z",
+                  "imagen": "https://cdn.ticketu.cl/images/evt_123456.jpg",
+                  "precio": 25000,
+                  "es_gratis": false,
+                  "es_pasado": false,
+                  "stock": 45,
+                  "estado": "DISPONIBLE",
+                  "notas": "Apertura de puertas a las 18:00 hrs. Mayores de 18 años.",
+                  "organizador": "Federación de Estudiantes TicketU"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Evento no encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "mensaje": "Evento no encontrado"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/catalogo/eventos/{id}/info-servicio": {
+      "get": {
+        "summary": "Datos mínimos para Reseñas y Promociones (BE3)",
+        "description": "Endpoint liviano expuesto para otros microservicios (Reseñas, Promociones) para validar la existencia de un evento y obtener datos de contexto básico sin transferir objetos pesados.",
+        "tags": [
+          "Integración con Reseñas (BE3)"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador único del evento a validar",
+            "schema": {
+              "type": "string",
+              "example": "evt_123456"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evento validado exitosamente",
             "content": {
               "application/json": {
                 "example": {
@@ -69,7 +256,7 @@
             }
           },
           "404": {
-            "description": "Evento no existe",
+            "description": "El evento no existe en el catálogo",
             "content": {
               "application/json": {
                 "example": {
@@ -82,19 +269,19 @@
         }
       }
     },
-    "/catalogo/eventos/{id_evento}/stock": {
+    "/api/catalogo/eventos/{id}/stock": {
       "put": {
-        "summary": "Actualizar stock de evento tras compra",
-        "description": "Endpoint expuesto para el microservicio de Entradas (Contrato_Entradas_Catalogo.docx.pdf). Recibe la actualización del nuevo_stock vía HTTP REST (PUT).",
+        "summary": "Actualizar stock desde Entradas/Inventario (conforme a contrato)",
+        "description": "Endpoint expuesto para que el microservicio de Entradas e Inventario notifique y actualice el stock restante de entradas de un evento tras la confirmación de una compra.",
         "tags": [
-          "Endpoints Expuestos"
+          "Integración con Entradas / Inventario"
         ],
         "parameters": [
           {
-            "name": "id_evento",
+            "name": "id",
             "in": "path",
             "required": true,
-            "description": "ID del evento a actualizar",
+            "description": "Identificador del evento a actualizar",
             "schema": {
               "type": "string",
               "example": "evt_123456"
@@ -113,8 +300,8 @@
                 "properties": {
                   "nuevo_stock": {
                     "type": "integer",
-                    "example": 45,
-                    "description": "Nuevo stock disponible"
+                    "example": 43,
+                    "description": "Nueva cantidad de stock de entradas disponible"
                   }
                 }
               }
@@ -129,245 +316,27 @@
                 "example": {
                   "mensaje": "Stock actualizado exitosamente",
                   "id_evento": "evt_123456",
-                  "nuevo_stock": 45
+                  "nuevo_stock": 43
                 }
               }
             }
           },
           "400": {
-            "description": "Solicitud inválida"
+            "description": "Parámetros de entrada inválidos",
+            "content": {
+              "application/json": {
+                "example": {
+                  "mensaje": "El nuevo stock debe ser un entero mayor o igual a 0"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Evento no encontrado"
-          }
-        }
-      }
-    },
-    "/organizador/eventos/proximos": {
-      "get": {
-        "summary": "Carga inicial de eventos próximos (Home)",
-        "description": "Consumido de Panel Organizador (Contrato_Catalogo_PanelOrganizador.docx). Retorna lista de tarjetas para la Home.",
-        "tags": [
-          "Integración con Panel Organizador"
-        ],
-        "responses": {
-          "200": {
-            "description": "Lista de eventos próximos",
-            "content": {
-              "application/json": {
-                "example": [
-                  {
-                    "id_evento": "evt_123456",
-                    "titulo": "Festival de Música TicketU 2026",
-                    "lugar": "Movistar Arena, Santiago",
-                    "fecha": "2026-10-15T20:00:00Z",
-                    "imagen": "https://cdn.ticketu.cl/images/evt_123456.jpg",
-                    "stock": 45,
-                    "precio_final": 25000,
-                    "estado": "DISPONIBLE"
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    "/organizador/eventos/buscar": {
-      "post": {
-        "summary": "Búsqueda y filtrado de eventos",
-        "description": "Consumido de Panel Organizador (Contrato_Catalogo_PanelOrganizador.docx). Filtra por texto, categoría y rango de fechas.",
-        "tags": [
-          "Integración con Panel Organizador"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "example": {
-                "texto": "musica",
-                "categoria": "Conciertos",
-                "fecha_inicio": "2026-10-01",
-                "fecha_fin": "2026-10-31"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Resultados filtrados",
-            "content": {
-              "application/json": {
-                "example": [
-                  {
-                    "id_evento": "evt_123456",
-                    "titulo": "Festival de Música TicketU 2026",
-                    "categoria": "Conciertos",
-                    "precio_final": 25000
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    "/organizador/eventos/{id_evento}": {
-      "get": {
-        "summary": "Obtener detalle completo de un evento",
-        "description": "Consumido de Panel Organizador (Contrato_Catalogo_PanelOrganizador.docx). Retorna la información completa para la pantalla de detalle.",
-        "tags": [
-          "Integración con Panel Organizador"
-        ],
-        "parameters": [
-          {
-            "name": "id_evento",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "evt_123456"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Detalle del evento cargado",
+            "description": "Evento no encontrado",
             "content": {
               "application/json": {
                 "example": {
-                  "id_evento": "evt_123456",
-                  "titulo": "Festival de Música TicketU 2026",
-                  "descripcion": "El festival universitario más grande del año.",
-                  "lugar": "Movistar Arena, Santiago",
-                  "fecha": "2026-10-15T20:00:00Z",
-                  "imagen": "https://cdn.ticketu.cl/images/evt_123456.jpg",
-                  "stock": 45,
-                  "precio_final": 25000,
-                  "estado": "DISPONIBLE",
-                  "organizador": "Federación de Estudiantes"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/resenas/calificaciones-basicas": {
-      "post": {
-        "summary": "Obtener promedios de estrellas en bloque",
-        "description": "Consumido de Reseñas (Contrato_Catalogo_Resenas.docx). Solicita calificaciones para una lista de IDs de eventos.",
-        "tags": [
-          "Integración con Reseñas"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "example": {
-                "eventos_ids": [
-                  "evt_123456",
-                  "evt_789012"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Promedios de calificaciones",
-            "content": {
-              "application/json": {
-                "example": {
-                  "calificaciones": [
-                    {
-                      "id_evento": "evt_123456",
-                      "promedio_estrellas": 4.8,
-                      "total_resenas": 124
-                    },
-                    {
-                      "id_evento": "evt_789012",
-                      "promedio_estrellas": 4.2,
-                      "total_resenas": 45
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/resenas/evento/{id_evento}": {
-      "get": {
-        "summary": "Obtener comentarios individuales de un evento",
-        "description": "Consumido de Reseñas (Contrato_Catalogo_Resenas.docx). Carga la lista de reseñas para el detalle del evento.",
-        "tags": [
-          "Integración con Reseñas"
-        ],
-        "parameters": [
-          {
-            "name": "id_evento",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "evt_123456"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Comentarios del evento",
-            "content": {
-              "application/json": {
-                "example": [
-                  {
-                    "id_resena": "res_001",
-                    "calificacion": 5,
-                    "comentario": "¡Excelente organización y gran sonido!",
-                    "fecha": "2026-09-20T14:30:00Z"
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    "/entradas/procesar-compra": {
-      "post": {
-        "summary": "Solicitar reserva / procesar compra de entradas",
-        "description": "Consumido de Entradas e Inventario (Contrato_Catalogo_EntradasInventario.docx). Inicia la reserva de tickets.",
-        "tags": [
-          "Integración con Entradas e Inventario"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "example": {
-                "id_evento": "evt_123456",
-                "cantidad": 2,
-                "token_sesion": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Reserva procesada exitosamente",
-            "content": {
-              "application/json": {
-                "example": {
-                  "exito": true,
-                  "mensaje": "Reserva confirmada con éxito",
-                  "codigo_reserva": "RES-2026-9981",
-                  "detalles_compra": {
-                    "id_evento": "evt_123456",
-                    "cantidad": 2,
-                    "monto_total": 50000
-                  }
+                  "mensaje": "Evento no encontrado"
                 }
               }
             }
