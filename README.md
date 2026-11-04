@@ -1,120 +1,130 @@
-# Sistema de Catálogo y Gestión de Eventos
+# Microservicio de Catálogo de Eventos (TicketU)
 
-Repositorio de **Arquitectura, Contratos de Interfaz, Hitos, Swagger y Modelo de Datos** del microservicio de Catálogo de Eventos (TicketU).
+Microservicio backend RESTful desarrollado en **Node.js** y **Express**, encargado de la consulta, búsqueda multivariable, filtros avanzados y vista de detalle de eventos, sincronizado con base de datos PostgreSQL alojada en **Supabase**.
 
-> 💡 **Código fuente del Microservicio:** El código ejecutable del backend (Node.js/Express) con Docker se encuentra en su propio repositorio dedicado:  
-> 👉 **[ms-catalogo-eventos](https://github.com/Equipo-7-Catalogo-de-eventos/ms-catalogo-eventos)**
-
----
-
-## Información del Equipo
-
-* **Grupo 7:** Catálogo de Eventos
-* **Integrantes:**
-  * **Nombre:** Amalia Toledo — **Correo:** `amalia.toledo@estudiantes.uv.cl`
-  * **Nombre:** Maximiliano Rozas — **Correo:** `maximiliano.rozas@estudiantes.uv.cl`
-  * **Nombre:** Anaís Muñoz — **Correo:** `anais.munozm@estudiantes.uv.cl`
-  * **Nombre:** Diego Valenzuela — **Correo:** `diego.valenzuelap@estudiantes.uv.cl`
-  * **Nombre:** Gladys Carvacho — **Correo:** `gladys.carvacho@estudiantes.uv.cl`
+> **Documentación General y Contratos:**  
+> Los contratos de interfaz interservicios, diagramas de secuencia e hitos de planificación se encuentran en el repositorio principal:  
+> **[Equipo-7-Catalogo-de-eventos / Catalogo_de_eventos](https://github.com/Equipo-7-Catalogo-de-eventos/Catalogo_de_eventos)**
 
 ---
 
-## Diagrama de Secuencia
+## Características de la Implementación (Rúbrica y Contratos)
 
-```mermaid
-sequenceDiagram
-    actor Usuario as Cliente
-    participant Sistema as Sistema (Catálogo)
-    participant ModOrganizador as Módulo Panel Organizador
-    participant ModResenas as Módulo Reseñas
-    participant ModInventario as Módulo Entradas / Inventario
-    autonumber
+* **Búsqueda Multivariable (HU2):** Búsqueda por palabra clave concurrente en `evento_titulo`, `evento_descripcion` y `evento_lugar`.
+* **Filtros Avanzados (BE1):**
+  * Temporalidad: `proximos` (>= hoy), `pasados` (< hoy).
+  * Rango de fechas: `fecha_desde` y `fecha_hasta`.
+  * Categorías múltiples: filtrado simultáneo por varias categorías (ej. `academico,fiesta`).
+  * Ordenamiento dinámico: por fecha (`fecha_asc`, `fecha_desc`), valoración promedio (`valoracion`) o precio (`precio_asc`, `precio_desc`).
+  * Paginación limpia: con `pagina` y `limite`.
+* **Campo Calculado (BE1):** Atributo booleano `es_pasado` agregado a cada evento retornado.
+* **Integración Interservicios Resiliente (BE2):**
+  * Comunicación con microservicio de **Reseñas** para calificaciones básicas y opiniones detalladas con SLA < 500ms y *Graceful Degradation* (fallback automático a "Sin calificaciones aún" si Reseñas no responde).
+  * Comunicación con **Panel Organizador** para carga de eventos.
+* **Servicio para Otros Módulos (BE3):**
+  * Endpoint `GET /api/catalogo/eventos/:id/info-servicio` para entregar ID y nombre a Reseñas, y precio a Promociones.
+* **Sincronización de Stock con Entradas (Contrato oficial):**
+  * Endpoint `PUT /api/catalogo/eventos/:id/stock` que valida `nuevo_stock` y `token_sesion`, actualizando automáticamente el estado a `agotado` si el stock llega a 0.
+* **Dockerización Compartida:** Configurado para conectarse a la red común Docker `plataforma-eventos-net`.
+* **Swagger OpenAPI 3.0:** Documentación completa en español accesible en `/api-docs`.
 
-    %% Flujo 1: Carga Inicial de Catálogo con los 6 eventos más próximos (HU1)
-    Note over Usuario,ModOrganizador: 1. Carga Inicial: 6 Eventos Próximos (HU1)
-    Usuario->>Sistema: ver_catalogo()
-    Sistema->>ModOrganizador: solicitar_eventos_proximos()
-    Note over ModOrganizador: Incluye título, lugar, fecha, imagen, stock y precio final
-    ModOrganizador-->>Sistema: retornar_eventos_proximos(lista_eventos)
-    Sistema->>ModResenas: solicitar_calificaciones_basicas(lista_id_eventos)
-    Note over ModResenas,Sistema: Puede retornar las calificaciones o vacío (si no hay reseñas)
-    ModResenas-->>Sistema: retornar_calificaciones_basicas(calificaciones_o_vacio)
-    Sistema-->>Usuario: mostrar_catalogo_proximos_eventos()
+---
 
-    %% Flujo 2: Búsqueda, Filtros y Eventos Pasados (HU1, HU2, HU3)
-    Note over Usuario,ModOrganizador: 2. Exploración y Filtros (HU1, HU2, HU3)
-    opt Filtrar por Calificación, Eventos pasados o búsqueda
-        Usuario->>Sistema: aplicar_filtro(criterio)
-        Sistema->>ModOrganizador: buscar_eventos_por_filtro(criterio)
-        ModOrganizador-->>Sistema: retornar_eventos_filtrados(lista_eventos)
-        
-        Sistema->>ModResenas: solicitar_calificaciones_basicas(lista_id_eventos)
-        ModResenas-->>Sistema: retornar_calificaciones_basicas(calificaciones_o_vacio)
-        
-        Sistema-->>Usuario: mostrar_resultados_filtrados()
-    end
+## Estructura del Repositorio
 
-    %% Flujo 3: Detalle del Evento (HU4)
-    Note over Usuario,ModResenas: 3. Detalle de Evento (HU4)
-    Usuario->>Sistema: seleccionar_evento(id_evento)
-    par Consulta de datos completos y reseñas
-        Sistema->>ModOrganizador: solicitar_detalle_evento(id_evento)
-        ModOrganizador-->>Sistema: retornar_detalle_evento()
-    and
-        Sistema->>ModResenas: consultar_resenas_completas(id_evento)
-        Note over ModResenas,Sistema: Pide opiniones y notas. Puede retornar vacío si el evento no tiene reseñas.
-        ModResenas-->>Sistema: retornar_resenas_completas(datos_o_vacio)
-    end
-
-    alt Evento Pasado
-        Sistema-->>Usuario: mostrar_detalle_pasado_boton_deshabilitado()
-    else Evento Futuro / Vigente (Agotado)
-        Sistema-->>Usuario: mostrar_detalle_agotado_compra_deshabilitada()
-    else Evento Futuro / Vigente (Disponible)
-        Sistema-->>Usuario: mostrar_detalle_disponible_con_opcion_compra()
-    end
-
-    %% Flujo 4: Secuencia de Compra
-    Note over Usuario,ModInventario: 4. Proceso de Compra y Actualización de Stock
-    Usuario->>Sistema: solicitar_compra_entrada(id_evento, tipo_entrada, cantidad)
-    Sistema->>ModInventario: procesar_compra(id_evento, tipo_entrada, cantidad)
-    ModInventario-->>Sistema: confirmar_compra_exitosa(nuevo_stock)
-    Sistema->>Sistema: actualizar_disponibilidad(id_evento, nuevo_stock)
-    Sistema-->>Usuario: mostrar_confirmacion_compra()
+```text
+ms-catalogo-eventos/
+├── src/
+│   ├── config/
+│   │   └── supabase.js             # Inicialización del cliente Supabase
+│   ├── controllers/
+│   │   └── eventController.js      # Lógica de negocio y controladores
+│   ├── routes/
+│   │   └── eventRoutes.js          # Definición de rutas Express
+│   ├── services/
+│   │   └── externalServices.js     # Integración HTTP con otros microservicios (BE2)
+│   └── index.js                    # Entrada de servidor Express y Swagger UI
+├── Dockerfile                      # Contenedor Node 20 Alpine
+├── docker-compose.yml              # Despliegue con red plataforma-eventos-net
+├── .env.example                    # Plantilla de variables de entorno (puerto 4000)
+├── .gitignore                      # Exclusiones de Git
+├── package.json
+└── README.md
 ```
 
 ---
 
-## Contratos de Interfaz
+## Variables de Entorno
 
-Los acuerdos de integración y especificaciones de endpoints pactados con los otros microservicios del ecosistema TicketU se encuentran documentados en la carpeta [`docs/`](docs/):
+Crear un archivo `.env` a partir de `.env.example`:
+```bash
+cp .env.example .env
+```
 
-| Contrato | Consumidor | Proveedor | Descripción |
-| :--- | :--- | :--- | :--- |
-| [**CONTRATO_CATALOGO_PANEL.md**](docs/CONTRATO_CATALOGO_PANEL.md) | Catálogo de Eventos | Panel Organizador | Consulta de eventos próximos, filtros y ficha de detalle. |
-| [**CONTRATO_CATALOGO_RESENAS.md**](docs/CONTRATO_CATALOGO_RESENAS.md) | Catálogo de Eventos | Reseñas | Calificaciones básicas (estrellas) y comentarios completos. |
-| [**CONTRATO_CATALOGO_ENTRADAS.md**](docs/CONTRATO_CATALOGO_ENTRADAS.md) | Catálogo de Eventos | Entradas / Inventario | Solicitud de procesamiento de compra de entradas. |
-| [**CONTRATO_ENTRADAS_CATALOGO.md**](docs/CONTRATO_ENTRADAS_CATALOGO.md) | Entradas / Inventario | Catálogo de Eventos | Actualización de stock en el catálogo tras compra exitosa (Resolución formal HU5 vía REST). |
+Contenido necesario:
+```env
+PORT=4000
+SUPABASE_URL=https://tu-proyecto.supabase.co
+SUPABASE_KEY=tu-anon-key
 
----
-
-## Especificación OpenAPI / Swagger y Postman
-
-* **Especificación Swagger JSON:** [`docs/swagger.json`](docs/swagger.json)
-* **Colección de Pruebas Postman:** [`Integracion_Catalogo.postman_collection.json`](Integracion_Catalogo.postman_collection.json)
-
----
-
-## Hitos y Planificación
-
-El seguimiento de los sprints, entregables y estado de cada etapa se encuentra detallado en:
-* [**docs/milestones.md**](docs/milestones.md)
+# Microservicios externos (Red plataforma-eventos-net / Gateway)
+RESENAS_SERVICE_URL=http://resenas-service:3000
+ORGANIZADOR_SERVICE_URL=http://organizador-service:3000
+ENTRADAS_SERVICE_URL=http://entradas-service:3000
+EXTERNAL_TIMEOUT_MS=500
+```
 
 ---
 
-## Base de Datos
+## Ejecución Local
 
-El diseño del modelo relacional se encuentra en [`schema_db.sql`](schema_db.sql). Utiliza PostgreSQL alojado en Supabase, incluyendo índices optimizados para:
-* Búsqueda por texto rápido (`GIN` con `to_tsvector` en español).
-* Filtrado acelerado por estado y categoría (`idx_eventos_estado_categoria`).
-* Ordenamiento cronológico de eventos (`idx_eventos_fecha`).
+### 1. Instalar dependencias
+```bash
+npm install
+```
+
+### 2. Iniciar en modo desarrollo
+```bash
+npm run dev
+```
+
+### 3. Iniciar en modo producción
+```bash
+npm start
+```
+
+---
+
+## Ejecución con Docker (Red Compartida plataforma-eventos-net)
+
+El microservicio está preparado para integrarse al **API Gateway** central de TicketU ([FWizav/backendticketU](https://github.com/FWizav/backendticketU)).
+
+1. Crear la red compartida (si no existe):
+```bash
+docker network create plataforma-eventos-net 2>/dev/null || true
+```
+
+2. Construir y levantar el contenedor:
+```bash
+docker compose up -d --build
+```
+
+El servicio se registra en la red con el nombre de contenedor `ms-catalogo-eventos` y el alias de red `catalogo-service` en el puerto `4000`.
+
+---
+
+## Endpoints Principales
+
+| Método | Endpoint | Descripción |
+| :---: | :--- | :--- |
+| `GET` | `/health` | Chequeo de salud del servicio |
+| `GET` | `/api-docs` | Documentación interactiva Swagger OpenAPI 3.0 |
+| `GET` | `/api/catalogo/eventos` | Listar eventos con filtros avanzados, búsqueda multivariable y paginación |
+| `GET` | `/api/catalogo/eventos/:id` | Detalle completo del evento y campo calculado `es_pasado` |
+| `GET` | `/api/catalogo/eventos/:id/resenas` | Consulta de estrellas y opiniones a Reseñas con fallback seguro |
+| `GET` | `/api/catalogo/eventos/:id/info-servicio` | Datos mínimos para microservicios de Reseñas y Promociones (BE3) |
+| `PUT` | `/api/catalogo/eventos/:id/stock` | Actualizar stock desde Entradas/Inventario (conforme a contrato) |
+
+Para ver el detalle completo de las pruebas, capturas y respuestas HTTP de integración, consultar:  
+👉 **[Guía y Evidencias de Integración (docs/EVIDENCIAS_INTEGRACION.md)](docs/EVIDENCIAS_INTEGRACION.md)**
+

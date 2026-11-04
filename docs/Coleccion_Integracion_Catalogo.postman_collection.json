@@ -1,13 +1,13 @@
 {
   "info": {
     "name": "Coleccion_Integracion_Catalogo_de_Eventos_v2",
-    "description": "Colección oficial de pruebas de integración para el microservicio Catálogo de Eventos (ms-catalogo-eventos). Alineada con los endpoints principales del proyecto.",
+    "description": "Colecci\u00f3n oficial de pruebas de integraci\u00f3n para el microservicio Cat\u00e1logo de Eventos (ms-catalogo-eventos). Alineada con los endpoints principales del proyecto.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:3000",
+      "value": "http://localhost:4000",
       "type": "string"
     }
   ],
@@ -50,10 +50,10 @@
       ]
     },
     {
-      "name": "2. API Principal Catálogo de Eventos",
+      "name": "2. API Principal Cat\u00e1logo de Eventos",
       "item": [
         {
-          "name": "GET Listar Eventos (Paginación y Filtros)",
+          "name": "GET Listar Eventos (Paginaci\u00f3n y Filtros)",
           "request": {
             "method": "GET",
             "header": [],
@@ -114,64 +114,10 @@
       ]
     },
     {
-      "name": "3. Endpoints Expuestos a Otros Squads (BE3 / Contratos)",
+      "name": "4. Consumo de Servicios Externos (Integraci\u00f3n Inter-Squads)",
       "item": [
         {
-          "name": "GET Info Servicio para Reseñas y Promociones (BE3)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/catalogo/eventos/evt_123456/info-servicio",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "catalogo",
-                "eventos",
-                "evt_123456",
-                "info-servicio"
-              ]
-            }
-          }
-        },
-        {
-          "name": "PUT Actualizar Stock desde Entradas/Inventario",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"nuevo_stock\": 43\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/catalogo/eventos/evt_123456/stock",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "catalogo",
-                "eventos",
-                "evt_123456",
-                "stock"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "4. Consumo de Servicios Externos (Integración Inter-Squads)",
-      "item": [
-        {
-          "name": "POST Obtener Calificaciones en Bloque (Reseñas)",
+          "name": "POST Obtener Calificaciones en Bloque (Rese\u00f1as)",
           "request": {
             "method": "POST",
             "header": [
@@ -222,6 +168,127 @@
                 "v1",
                 "entradas",
                 "procesar-compra"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Integraci\u00f3n Entradas - Stock (I1)",
+      "item": [
+        {
+          "name": "PUT Actualizar Stock - \u00c9xito 200 OK",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nuevo_stock\": 144,\n  \"token_sesion\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/catalogo/eventos/evt-101/stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "catalogo",
+                "eventos",
+                "evt-101",
+                "stock"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT Actualizar Stock - Error 404 Evento Inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nuevo_stock\": 50,\n  \"token_sesion\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/catalogo/eventos/evt-999/stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "catalogo",
+                "eventos",
+                "evt-999",
+                "stock"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT Actualizar Stock - Error 400 Stock Inv\u00e1lido",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nuevo_stock\": -5,\n  \"token_sesion\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/catalogo/eventos/evt-101/stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "catalogo",
+                "eventos",
+                "evt-101",
+                "stock"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT Actualizar Stock - Error 401 Sin Token de Sesi\u00f3n",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nuevo_stock\": 100\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/catalogo/eventos/evt-101/stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "catalogo",
+                "eventos",
+                "evt-101",
+                "stock"
               ]
             }
           }
