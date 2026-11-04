@@ -17,4 +17,4 @@ Conforme a la especificacion oficial de la Evaluacion 2 de Taller de Integracion
 * BD1 (Anais Munoz): Persistencia efectiva en PostgreSQL / Supabase, consultas SQL de verificacion antes y despues de la integracion y consistencia de datos.
 * UI1 (Amalia Toledo): Integracion en la interfaz de usuario, despliegue transparente de eventos y stock actualizado sin requerir recargas manuales.
 * GE1 (Diego Valenzuela): Trazabilidad de historias de usuario asociadas a las integraciones en GitHub Issues, definicion de criterios de aceptacion y vinculacion con pull requests.
-* CA1 (Gladys Carvacho): Diseno y ejecucion de la coleccion de pruebas de integracion en Postman, cubriendo casos exitosos y casos de error con evidencia registrada.
+* CA1 (Gladys Carvacho): Diseño y ejecucion de la coleccion de pruebas de integracion en Postman, cubriendo casos exitosos y casos de error con evidencia registrada.
