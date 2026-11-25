@@ -2,9 +2,11 @@
 
 Microservicio backend RESTful desarrollado en **Node.js** y **Express**, encargado de la consulta, búsqueda multivariable, filtros avanzados y vista de detalle de eventos, sincronizado con base de datos PostgreSQL alojada en **Supabase**.
 
-> **Documentación General y Contratos:**  
-> Los contratos de interfaz interservicios, diagramas de secuencia e hitos de planificación se encuentran en el repositorio principal:  
-> **[Equipo-7-Catalogo-de-eventos / Catalogo_de_eventos](https://github.com/Equipo-7-Catalogo-de-eventos/ms-catalogo-eventos)**
+**Código vigente:** el código instalado en workstation para la Evaluación 4 está en
+**[ms-catalogo-eventos (rama main)](https://github.com/Equipo-7-Catalogo-de-eventos/ms-catalogo-eventos/tree/main)**.
+El código de este repositorio es una versión anterior y no corresponde a lo instalado.
+
+Este repositorio mantiene la planificación del equipo: historias de usuario, issues de integración y contratos.
 
 ---
 
