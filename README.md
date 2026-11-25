@@ -4,7 +4,7 @@ Microservicio backend RESTful desarrollado en **Node.js** y **Express**, encarga
 
 > **Documentación General y Contratos:**  
 > Los contratos de interfaz interservicios, diagramas de secuencia e hitos de planificación se encuentran en el repositorio principal:  
-> **[Equipo-7-Catalogo-de-eventos / Catalogo_de_eventos](https://github.com/Equipo-7-Catalogo-de-eventos/Catalogo_de_eventos)**
+> **[Equipo-7-Catalogo-de-eventos / Catalogo_de_eventos](https://github.com/Equipo-7-Catalogo-de-eventos/ms-catalogo-eventos)**
 
 ---
 
