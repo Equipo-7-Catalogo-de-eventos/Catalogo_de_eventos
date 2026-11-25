@@ -5,6 +5,8 @@ Microservicio backend RESTful desarrollado en **Node.js** y **Express**, encarga
 
 > **Repositorio del Back End:**  
 > [ms-catalogo-eventos](https://github.com/Equipo-7-Catalogo-de-eventos/ms-catalogo-eventos)
+>
+> **Importante:** el código vigente e instalado en workstation está en `ms-catalogo-eventos` (rama `main`). La carpeta `src/` de este repositorio corresponde a una versión anterior y no debe usarse para instalar.
 
 ---
 
@@ -22,7 +24,7 @@ Microservicio backend RESTful desarrollado en **Node.js** y **Express**, encarga
 - **Disponibilidad de entradas (HU5):** Actualización del stock desde Entradas/Inventario.
 - **Visualización de reseñas (HU6):** Consulta de calificaciones y opiniones de los eventos.
 - **Consumo de servicios (BE2):** Integración con Panel Organizador y Reseñas, con manejo de errores y tiempos de espera.
-- **Provisión de servicios (BE3):** Información de eventos para Reseñas y actualización de stock desde Entradas/Inventario.
+- **Provisión de servicios (BE3):** Información de eventos para Reseñas, actualización de stock desde Entradas/Inventario y consulta de precios para Promociones.
 - **Dockerización:** Conexión a la red compartida `plataforma-eventos-net`.
 - **Swagger OpenAPI 3.0:** Documentación interactiva disponible en `/api-docs`.
 
@@ -129,7 +131,7 @@ docker compose up -d --build
 | Alias de red | `catalogo-service` |
 | Red Docker | `plataforma-eventos-net` |
 | Puerto interno | `3000` |
-| Puertos externos | `3000` y `4000` |
+| Puerto externo | `4000` |
 
 ---
 
@@ -143,6 +145,7 @@ docker compose up -d --build
 | GET | `/api/catalogo/eventos/:id` | Detalle del evento |
 | GET | `/api/catalogo/eventos/:id/resenas` | Consulta de calificaciones y reseñas |
 | GET | `/api/catalogo/eventos/:id/info-servicio` | Información del evento para Reseñas |
+| GET | `/api/catalogo/eventos/:id/precio` | Consulta del precio para Promociones |
 | POST | `/api/catalogo/eventos` | Registro de eventos |
 | PUT | `/api/catalogo/eventos/:id/stock` | Actualización de stock desde Entradas/Inventario |
 | PATCH | `/api/catalogo/eventos/:id/stock` | Ruta alternativa de actualización de stock |
